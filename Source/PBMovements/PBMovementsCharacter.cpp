@@ -56,9 +56,10 @@ APBMovementsCharacter::APBMovementsCharacter()
 
 	// Attributes
 	bInRagdoll = false; 
-	AnimInstance = nullptr; 
-	LeftFootOffsetLimit = 50.f;
-	RightFootOffsetLimit = 50.f; 
+	AnimInstance = nullptr;
+	FootOffsetLimit = 50.f; 
+	IKLerpSpeed = 10.f;
+	IKTraceDistance = 60.f; 
 }
 
 void APBMovementsCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -150,7 +151,9 @@ float APBMovementsCharacter::FootTrace(const FName& InSocketName, const float Tr
 	}
 
 	OutImpactNormal = HitResult.Normal;
-	return (HitResult.Location - HitResult.TraceEnd).Size() - TraceDistance;
+	const float Result = (HitResult.Location - HitResult.TraceEnd).Size() - TraceDistance;
+
+	return FMath::Abs(Result) > FootOffsetLimit ? 0.f : Result; 
 }
 
 void APBMovementsCharacter::TriggerRagdoll()
@@ -208,15 +211,15 @@ void APBMovementsCharacter::Tick(float DeltaTime)
 
 	// IK foot placement
 	check(GetMesh());
-	const float LocalLeftFootOffset = FootTrace(LeftFootIkSocket, 60.f, LeftFootImpact); //FMath::Clamp(FootTrace(LeftFootIkSocket, 60.f, LeftFootImpact), -LeftFootOffsetLimit, 0.f);
-	const float LocalRightFootOffset = FootTrace(RightFootIkSocket, 60.f, RightFootImpact); //FMath::Clamp(FootTrace(RightFootIkSocket, 60.f, RightFootImpact),-RightFootOffsetLimit, 0.f);
+	const float LocalLeftFootOffset = FootTrace(LeftFootIkSocket, IKTraceDistance, LeftFootImpact);
+	const float LocalRightFootOffset = FootTrace(RightFootIkSocket, IKTraceDistance, RightFootImpact);
 
 	float OffsetMin = FMath::Min(LocalRightFootOffset, LocalLeftFootOffset);
-	RootOffset = FMath::Lerp(RootOffset, OffsetMin > 0.f ? 0.f : OffsetMin, 10.f*DeltaTime);
+	RootOffset = FMath::Lerp(RootOffset, OffsetMin > 0.f ? 0.f : OffsetMin, IKLerpSpeed*DeltaTime);
 
 	// Correct Foot offsets
-	LeftFootOffset = FMath::Lerp(LeftFootOffset, LocalLeftFootOffset - RootOffset, 10.f*DeltaTime);
-	RightFootOffset = FMath::Lerp(RightFootOffset, LocalRightFootOffset - RootOffset, 10.f*DeltaTime);
+	LeftFootOffset = FMath::Lerp(LeftFootOffset, LocalLeftFootOffset - RootOffset, IKLerpSpeed*DeltaTime);
+	RightFootOffset = FMath::Lerp(RightFootOffset, LocalRightFootOffset - RootOffset, IKLerpSpeed*DeltaTime);
 
 	// Update anim instance
 	check(AnimInstance); 

@@ -40,13 +40,9 @@ public: // Foot IK Attributes
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = IK)
 	FName RightFootIkSocket;
 
-	/** Left foot offset limit during IK */
+	/** Foot offset limit for IK */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
-	float LeftFootOffsetLimit;
-
-	/** Right foot offset limit during IK  */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
-	float RightFootOffsetLimit;
+	float FootOffsetLimit;
 
 	/** Left foot target location computed */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
@@ -56,29 +52,36 @@ public: // Foot IK Attributes
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
 	float RightFootOffset;
 
-	/**  */
+	/** Translation to apply on root bone during IK  */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
 	float RootOffset;
 
-	/**  */
+	/** Left hit trace normal */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
 	FVector RightFootImpact;
 
-	/**  */
+	/** Right hit trace normal */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
 	FVector LeftFootImpact;
 
-	/**  */
+	/**  
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
 	FRotator RightFootRotation;
 
-	/**  */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
-	FRotator LeftFootRotation;
+	FRotator LeftFootRotation; */
 
 	/** Is character in ragdoll mode */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay)
 	bool bInRagdoll; 
+
+	/** Lerping speed for IK attributes */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
+	float IKLerpSpeed;
+
+	/** Line trace distance used to track collisions during IK */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = IK)
+	float IKTraceDistance;
 
 private: // Private attributes
 
